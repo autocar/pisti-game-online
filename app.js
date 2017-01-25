@@ -18,7 +18,6 @@ app.get('/', function(req, res){
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
 function shuffle(array) {
         var currentIndex = array.length, temporaryValue, randomIndex ;
 
@@ -78,7 +77,8 @@ function hideCards(cards){
     return newCards
 }
 
-var deste = function(){
+var deste = function()
+{
         this.cards = [];
         for(var i = 0; i <= 3; i++)
         {
@@ -157,9 +157,12 @@ var game = function(){
             self.yereKartKoy(self.deste.pop())
         }
 
-        self.turn = self.p1.id
-        self.p1.socket.emit('setTurn', { turn: 'you' })
-        self.p2.socket.emit('setTurn', { turn: 'foe' })
+        if(Math.random() > 0.5)
+            self.turn = self.p1.id
+        else {
+            self.turn = self.p2.id
+
+        }
         self.isSettedUp = true
 
         self.kartDagit()
@@ -215,19 +218,35 @@ var game = function(){
 
         if(kim == self.p1.id){
             self.turn = self.p2.id
-            self.p2.socket.emit('setTurn', { turn: 'you' })
-            self.p1.socket.emit('setTurn', { turn: 'foe' })
+            self.p1.s
         } else {
             self.turn = self.p1.id
-            self.p1.socket.emit('setTurn', { turn: 'you' })
-            self.p2.socket.emit('setTurn', { turn: 'foe' })
+
         }
         if(self.controller()){
             self.kartDagit()
 
         }
     }
+    this.getRakip = function(kim){
 
+        if(!self.isSettedUp) return false
+
+        if(kim == self.p1.id){
+            return self.p2
+        } else {
+            return self.p1
+        }
+    }
+    this.sendSmiley = function(kim, name){
+        if(name == "yumruk")
+            self.getRakip(kim).socket.emit('getSmiley',{img:"yumruk.png"})
+        else if(name == "kalp")
+            self.getRakip(kim).socket.emit('getSmiley',{img:"kalp.png"})
+        else if(name == "opucuk")
+            self.getRakip(kim).socket.emit('getSmiley',{img:"opucuk.png"})
+
+    }
     this.controller = function(){
             r = 0;
             for(var i = 0; i < 4; i++)
@@ -263,8 +282,6 @@ var game = function(){
                 return false
     }
     this.refreshOrt = function(){
-        if(!(self.p1.socket && self.p2.socket)) return false
-
         self.p1.socket.emit('refreshOrt', {
           ort: self.ort,
           ortSum: self.ortSum
@@ -357,7 +374,8 @@ var Clients = function(){
         usernames.splice(usernames.indexOf(socket.nick), 1)
     }
 
-    this.getSocket = function(id){
+    this.getSocket = function(id)
+    {
         for(socket in SOCKET_LIST)
         {
             if(SOCKET_LIST[socket.id] == id)
@@ -432,7 +450,12 @@ io.sockets.on('connection',function(socket){
         }
 
     })
-
+    socket.on('sendSmiley',function(data,callback){
+        if(socket.game && socket.game.isSettedUp)
+        {
+                socket.game.sendSmiley(socket.id, data.type)
+        }
+    })
     socket.on('disconnect',function(data){
         clients.remove(socket)
 

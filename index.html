@@ -6,6 +6,8 @@
         <title>Pisti of furrki || Multiplayer</title>
     </head>
     <body>
+        <div id="moves"></div>
+
         <div class='container'>
 
             <div class="panel panel-primary" id='setPanel'  >
@@ -17,6 +19,10 @@
                     </div>
                     <button type="submit" class="btn btn-default">Set Nick</button>
                   </form>
+
+                  <button class="btn btn-primary" onclick="window.location='/auth/facebook'">Facebook</button>
+                  <button class="btn btn-danger" onclick="window.location='/logout'">Logout</button>
+
               </div>
             </div>
 
@@ -36,6 +42,7 @@
             </div>
 
             <div class="panel panel-primary" id="gamePanel">
+
               <div class="panel-heading">
                   <table class='fullwidth'>
                       <tr>
@@ -45,6 +52,9 @@
                   </table>
               </div>
               <div class="panel-body">
+                  <button id="vur">Vur</button>
+                  <button id="kalp">Kalp</button>
+                  <button id="opucuk">Öpücük</button>
                   <table class="table" id="gameTable">
                     <tbody>
                         <tr id='foeHand'>
@@ -148,7 +158,7 @@
                             $('#gamePanel').show()
                             $('#myNick').text(nick)
                         } else {
-                            alert('A Problem Ossured!')
+                            alert('A Problem Occured!')
                         }
 
                     })
@@ -164,7 +174,7 @@
                             $('#myNick').text(nick)
                             $('#foeNick').text(foeNick)
                         } else {
-                            alert('A Problem Ossured!')
+                            alert('A Problem Occured!')
                         }
 
                     })
@@ -264,6 +274,20 @@
                         $roomsTable.append('<tr><td>'+data.rooms[room].nick+'</td><td><button class=" btn btn-success " name="joinRoomButton" onclick=joinRoom("'+data.rooms[room].id+'")>Katıl</button></td><td>Boş</td></tr>')
                     }
 
+                })
+                socket.on('getSmiley', function(data){
+                        $("#moves").css("background-image","url(images/moves/"+data.img+")")
+                        $("#moves").fadeIn(300)
+                        $("#moves").fadeOut(300)
+                })
+                $("#vur").on("click",function(e){
+                    socket.emit('sendSmiley', {type:"yumruk"})
+                })
+                $("#kalp").on("click",function(e){
+                    socket.emit('sendSmiley', {type:"kalp"})
+                })
+                $("#opucuk").on("click",function(e){
+                    socket.emit('sendSmiley', {type:"opucuk"})
                 })
 
 
