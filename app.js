@@ -228,25 +228,7 @@ var game = function(){
 
         }
     }
-    this.getRakip = function(kim){
 
-        if(!self.isSettedUp) return false
-
-        if(kim == self.p1.id){
-            return self.p2
-        } else {
-            return self.p1
-        }
-    }
-    this.sendSmiley = function(kim, name){
-        if(name == "yumruk")
-            self.getRakip(kim).socket.emit('getSmiley',{img:"yumruk.png"})
-        else if(name == "kalp")
-            self.getRakip(kim).socket.emit('getSmiley',{img:"kalp.png"})
-        else if(name == "opucuk")
-            self.getRakip(kim).socket.emit('getSmiley',{img:"opucuk.png"})
-
-    }
     this.controller = function(){
             r = 0;
             for(var i = 0; i < 4; i++)
@@ -450,12 +432,7 @@ io.sockets.on('connection',function(socket){
         }
 
     })
-    socket.on('sendSmiley',function(data,callback){
-        if(socket.game && socket.game.isSettedUp)
-        {
-                socket.game.sendSmiley(socket.id, data.type)
-        }
-    })
+
     socket.on('disconnect',function(data){
         clients.remove(socket)
 
